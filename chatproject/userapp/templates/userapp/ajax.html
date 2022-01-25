@@ -1,0 +1,122 @@
+<script>
+var id
+$(".username").on("click", function(){
+    id = $(this).attr('data-sid')
+    console.log(id)
+    data = {
+        id: id
+    }
+
+    $.ajax(
+        {
+            url : "{% url 'profile' %}",
+            method: "POST",
+            data:data,
+            success: function(response)
+            {
+                console.log('===')
+                rname = response.context.data
+                rpic = rname[0].profile_pic
+                // console.log(rname[0].created_at)
+                un = rname[0].username
+                console.log('ridd',un)
+                $("#name").html(un)
+                $("#profile").html('<img id="profile" src="'+rpic+'" class="rounded-circle user_img"><span class="online_icon"></span>')
+
+                // =============================================
+                x = response.context.mess
+                uid = response.context.uid
+                console.log('uiddddd',uid)
+                
+                pic = uid[0].profile_pic
+                console.log('pppp',pic)
+                rid = rname[0].id
+                uid=uid[0].id
+                console.log('---->',rname[0].id)               
+
+                var my
+
+                for(i = 0;i<x.length;i++)
+                {
+                 if(x[i].sender_id ==uid)
+                 {
+                    my+='<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send" >'+x[i].value+'<span class="msg_time_send">08:55 AM, Today</span></div><div class="img_cont_msg"><img src="'+pic+'" class="rounded-circle user_img_msg"></div></div>'
+                 }
+
+                 if(x[i].sender_id ==rid)
+                 { 
+                    // console.log('=======else')
+                    my+='<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src=" '+rpic+' " class="rounded-circle user_img_msg"></div><div class="msg_cotainer" id="receiver">'+x[i].value+'<span class="msg_time">8:40 AM, Today</span></div></div>'
+                 }
+                }   
+                    $('#image').html('<img id="profile" src=" '+pic+' " class="rounded-circle user_img"><span class="online_icon"></span>');
+                    $(".message").html(my)
+                    // $("#sender").html(my)
+                    // $("#receiver").html(rec)
+            }
+        }
+    )
+
+})
+
+// console.log(id)
+
+$("#button").on("click",function(){
+    let mess = $("#mess").val()
+    console.log(mess)
+    console.log("------",id)
+
+    data = {
+        id : id,
+        mess : mess,
+    }
+
+    $.ajax(
+        {
+            url : "{% url 'message' %}",
+            method: "POST",
+            data:data,
+            success: function(response)
+            {
+                uid = response.context.uid
+                pic = uid[0].profile_pic
+                uid = uid[0].id
+                rid = response.context.rid
+                rpic = rid[0].profile_pic
+                rid = rid[0].id
+                
+                 
+
+                x=response.context.m_all
+                // console.log(x)
+                // console.log(x[0].value)
+                var my
+                for(i = 0;i<x.length;i++)
+                {
+                    // console.log(i)                        
+                //    console.log(x[i].value)
+                    // my+=x[i].value                
+
+                    if(x[i].sender_id ==uid)
+                 {
+                    my+='<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send" >'+x[i].value+'<span class="msg_time_send">08:55 AM, Today</span></div><div class="img_cont_msg"><img src="'+pic+'" class="rounded-circle user_img_msg"></div></div>'
+                 }
+
+                 if(x[i].sender_id ==rid)
+                 { 
+                    my+='<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="'+rpic+'" class="rounded-circle user_img_msg"></div><div class="msg_cotainer" id="receiver">'+x[i].value+'<span class="msg_time">8:40 AM, Today</span></div></div>'
+                 }
+
+                }
+                    $(".message").html(my)
+                    $("#mess").val('')
+                    // $("#sender").html(my)
+                    // $("#receiver").html(rec)
+
+            }
+        }
+    )
+    
+})
+
+</script>
